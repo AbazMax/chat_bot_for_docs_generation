@@ -68,8 +68,8 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
 # Приклад використання
 data = UserData()
 
-html_file = './dogovor_Yulia_2021.html'
-output_pdf = './output.pdf'
+html_file = './template/agreement_template.html'
+output_pdf = './agreements/output.pdf'
 data.contr_num = '010101'
 data.sign_date['day'] = '01'
 data.sign_date['month'] = 'квітня'
