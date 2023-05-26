@@ -11,15 +11,10 @@ storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
 
-
-class UserData:
-    def __init__(self):
-        self.name = None
-        self.date_of_birth = None
-
 class RegistrationState(StatesGroup):
     NAME = State()
     DATE_OF_BIRTH = State()
+
 
 @dp.message_handler(commands=['start'])
 async def handle_start(message: types.Message):
@@ -38,9 +33,10 @@ async def handle_start(message: types.Message):
 @dp.message_handler(content_types=['text'], text="Реєстрація")
 async def handle_registration(message: types.Message):
     # Обробка натиснення кнопки "Реєстрація"
+
     await message.answer("Ти обрав реєстрацію. Введи своє ім'я.")
     # Тут можна продовжити обробку введення імені та збереження даних користувача
-    user_data = UserData()
+
     # Встановлюємо стан "Очікування імені"
     await RegistrationState.NAME.set()
 
@@ -48,9 +44,11 @@ async def handle_registration(message: types.Message):
 @dp.message_handler(state=RegistrationState.NAME)
 async def handle_name(message: types.Message, state: FSMContext):
     # Обробка введення імені
+
     async with state.proxy() as data:
+        data['agreement_num'] = '123'   
         data['name'] = message.text
-    
+    print(message)
     # Відправляємо привітання з ім'ям користувача
     await message.answer(f"Привіт, {message.text}! Тепер введи свою дату народження (у форматі ДД-ММ-РРРР).")
     # Встановлюємо стан "Очікування дати народження"
@@ -68,15 +66,18 @@ async def handle_date_of_birth(message: types.Message, state: FSMContext):
         name = data['name']
         date_of_birth = data['date_of_birth']
     
+    print(data)
+
     # Відправляємо підтвердження разом із введеними даними
     await message.answer(f"Дякуємо! Твоє ім'я: {name}, Дата народження: {date_of_birth}")
 
     # Видаляємо дані користувача
     await state.finish()
-    
+
+
 if __name__ == '__main__':
     try:
         asyncio.run(dp.start_polling())
     except KeyboardInterrupt:
-        asyncio.run(dp.bot.stop_polling())
+        asyncio.run(dp.stop_polling())
 
