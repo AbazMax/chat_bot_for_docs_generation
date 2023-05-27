@@ -63,15 +63,47 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     # Видаляємо тимчасовий HTML-файл
     os.remove(temp_html_file)
 
+
+
+mes = '12345'
+
+def agr_num_generator(message):
+    date = datetime.today().strftime("%y%m%d")
+    return f'{date}-{message}'
+
+
+def get_month():
+    date = datetime.today()
+    
+    # Встановлюємо українську локалізацію
+    locale.setlocale(locale.LC_TIME, 'uk_UA.UTF-8')
+    
+    # Отримуємо назву місяця українською
+    month_name = date.strftime('%B')
+    
+    # Повертаємо назву місяця
+    return month_name
+
+
+def get_day():
+    return datetime.today().day
+
+def get_year():
+    return datetime.today().year
+
+print(get_month())
+print(get_day())
+print(get_year())
+
 # Приклад використання
 data = UserData()
 
 html_file = './template/agreement_template.html'
 output_pdf = './agreements/output.pdf'
-data.agreement_num = '010101'
-data.sign_date['day'] = '01'
-data.sign_date['month'] = 'квітня'
-data.sign_date['year'] = '2023'
+data.agreement_num = f'{agr_num_generator(mes)}'
+data.sign_date['day'] = f'{get_day()}'
+data.sign_date['month'] = f'{get_month()}'
+data.sign_date['year'] = f'{get_year()}'
 data.name = 'Наталія'
 data.surname = 'Щербина'
 data.passport_ser = 'AB'
@@ -85,27 +117,4 @@ data.mobile_phone = '+380993331122'
 generate_pdf_with_data(html_file, output_pdf, data)
 
 
-def agr_num_generator(message):
-    date = datetime.today().strftime("%y%m%d")
-    return f'{date}-{message}'
 
-
-def get_month():
-    date = datetime.datetime.today()
-    
-    # Встановлюємо українську локалізацію
-    locale.setlocale(locale.LC_TIME, 'uk_UA.UTF-8')
-    
-    # Отримуємо назву місяця українською
-    month_name = date.strftime('%B')
-    
-    # Повертаємо назву місяця
-    return month_name
-
-print(get_month())
-
-def get_day():
-    return datetime.today().day
-
-def get_day():
-    return datetime.today().year
