@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-
+import functions
 
 TOKEN = "5670993457:AAFAL0_TFVTIVz5EYgiGz8WRI9BjWenLWoY"
 

@@ -40,7 +40,6 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     passport_ser_element.string = user_data.passport_ser
     passport_num_element.string = user_data.passport_num
     passport_issued_by_element.string = user_data.passport_issued_by
-    passport_issue_date_element.string = user_data.passport_issue_date
     reg_address_element.string = user_data.reg_address
     id_code_element.string = user_data.id_code
     mobile_phone_element.string = user_data.mobile_phone
@@ -108,8 +107,7 @@ data.name = 'Наталія'
 data.surname = 'Щербина'
 data.passport_ser = 'AB'
 data.passport_num = '333555'
-data.passport_issued_by = 'якимось РУГУ в якогось району деякого міста'
-data.passport_issue_date = '01.01.01'
+data.passport_issued_by = 'якимось РУГУ в якогось району деякого міста від 01 березня 2000 р.'
 data.reg_address = 'м. Київ, вул. Хрещатик 1, кв. 1'
 data.id_code = '123456789'
 data.mobile_phone = '+380993331122'
