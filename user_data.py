@@ -6,7 +6,6 @@ class UserData:
             'year' : ''
             }
         self.name = None
-        self.surname = None
         self.passport_ser = None
         self.passport_num = None
         self.passport_issued_by = None

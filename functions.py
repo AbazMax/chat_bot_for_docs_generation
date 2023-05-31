@@ -21,28 +21,25 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     sign_date_m_element = soup.find(id='sign_date_m')
     sign_date_y_element = soup.find(id='sign_date_y')    
     name_element = soup.find(id='name')
-    surname_element = soup.find(id='surname')
     passport_ser_element = soup.find(id='passport_ser')
     passport_num_element = soup.find(id='passport_num')
     passport_issued_by_element = soup.find(id='passport_issued_by')
-    passport_issue_date_element = soup.find(id='passport_issue_date')
     reg_address_element = soup.find(id='reg_address')
     id_code_element = soup.find(id='id_code')
     mobile_phone_element = soup.find(id='mobile_phone')
     
     # Вставляємо дані в елементи
-    agreement_num_element.string = user_data.agreement_num
-    sign_date_d_element.string = user_data.sign_date['day']
-    sign_date_m_element.string = user_data.sign_date['month']
-    sign_date_y_element.string = user_data.sign_date['year']
-    name_element.string = user_data.name
-    surname_element.string = user_data.surname
-    passport_ser_element.string = user_data.passport_ser
-    passport_num_element.string = user_data.passport_num
-    passport_issued_by_element.string = user_data.passport_issued_by
-    reg_address_element.string = user_data.reg_address
-    id_code_element.string = user_data.id_code
-    mobile_phone_element.string = user_data.mobile_phone
+    agreement_num_element.string = user_data['agreement_num']
+    sign_date_d_element.string = user_data['sign_date']['day']
+    sign_date_m_element.string = user_data['sign_date']['month']
+    sign_date_y_element.string = user_data['sign_date']['year']
+    name_element.string = user_data['name']
+    passport_ser_element.string = user_data['passport_ser']
+    passport_num_element.string = user_data['passport_num']
+    passport_issued_by_element.string = user_data['passport_issued_by']
+    reg_address_element.string = user_data['reg_address']
+    id_code_element.string = user_data['id_code']
+    mobile_phone_element.string = user_data['mobile_phone']
 
     # Зберігаємо змінений HTML у тимчасовий файл
     temp_html_file = 'temp.html'
@@ -85,10 +82,10 @@ def get_month():
 
 
 def get_day():
-    return datetime.today().day
+    return f'{datetime.today().day}'
 
 def get_year():
-    return datetime.today().year
+    return f'{datetime.today().year}'
 
 print(get_month())
 print(get_day())
@@ -103,8 +100,7 @@ data.agreement_num = f'{agr_num_generator(mes)}'
 data.sign_date['day'] = f'{get_day()}'
 data.sign_date['month'] = f'{get_month()}'
 data.sign_date['year'] = f'{get_year()}'
-data.name = 'Наталія'
-data.surname = 'Щербина'
+data.name = 'Наталія Щербина'
 data.passport_ser = 'AB'
 data.passport_num = '333555'
 data.passport_issued_by = 'якимось РУГУ в якогось району деякого міста від 01 березня 2000 р.'
@@ -112,7 +108,7 @@ data.reg_address = 'м. Київ, вул. Хрещатик 1, кв. 1'
 data.id_code = '123456789'
 data.mobile_phone = '+380993331122'
 
-generate_pdf_with_data(html_file, output_pdf, data)
+# generate_pdf_with_data(html_file, output_pdf, data)
 
 
 
