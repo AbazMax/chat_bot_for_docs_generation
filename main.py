@@ -11,6 +11,7 @@ storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
 
+
 class RegistrationState(StatesGroup):
     NAME = State()
     PASSPORT_SER = State()
@@ -21,52 +22,58 @@ class RegistrationState(StatesGroup):
     MOBILE_PHONE = State()
     CHECK = State()
     CONFIRMATION = State()
-    EDIT_NAME = State()
-    EDIT_PSER = State()
-    EDIT_PNUM = State()
-    EDIT_PISS = State()
-    EDIT_REG_ADS = State()
-    EDIT_ID = State()
-    EDIT_PHONE = State()
     
 
 @dp.message_handler(commands=['start'])
 async def handle_start(message: types.Message):
     # start message
-    await message.answer('Привіт! Для складання договору, будь ласка, введи свої дані')
     
     # creating keyboard
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button_registration = types.KeyboardButton('Почати')
     keyboard.add(button_registration)
     
-    await message.answer('Натисни кнопку "Почати", та слідуй інструкції.', reply_markup=keyboard)
+    await message.answer('Привіт! Для складання договору, будь ласка, введи свої дані.'
+                         '\nНатисни кнопку "Почати", та слідуй інструкції.', reply_markup=keyboard)
 
 
 @dp.message_handler(content_types=['text'], text='Почати')
-async def handle_registration(message: types.Message):
+async def handle_registration(message: types.Message, state: FSMContext):
     # Обробка натиснення кнопки "Реєстрація"
+    async with state.proxy() as data:
+        data['edit_name'] = False
+        data['edit_pass_ser'] = False
+        data['edit_pass_num'] = False
+        data['edit_pass_iss'] = False
+        data['edit_reg_address'] = False
+        data['edit_id_code'] = False
+        data['edit_phone'] = False
+        data['agreement_num'] = agr_num_generator(message.from_id)  
+        data['sign_date'] = {'day' : get_day(),
+                             'month': get_month(),
+                             'year': get_year()}
+
 
     await message.answer('Введіть своє ПІБ')
     # Тут можна продовжити обробку введення імені та збереження даних користувача
     # Встановлюємо стан "Очікування імені"
     await RegistrationState.NAME.set()
-
+    
 
 @dp.message_handler(state=RegistrationState.NAME)
 async def handle_name(message: types.Message, state: FSMContext):
     # Обробка введення імені
-
     async with state.proxy() as data:
-        data['agreement_num'] = agr_num_generator(message.from_id)  
         data['name'] = message.text
-        data['sign_date'] = {'day' : get_day(),
-                             'month': get_month(),
-                             'year': get_year()}
-        
-    # Відправляємо привітання з ім'ям користувача
-    await message.answer(f'Привіт, {message.text}! Тепер введи серію паспорту.')
-    await RegistrationState.PASSPORT_SER.set()
+
+    if data['edit_name']:
+        await RegistrationState.CHECK.set()
+        await check(message, state)
+
+    else:      
+        await message.answer(f'Привіт, {message.text}! Тепер введи серію паспорту.')
+        await RegistrationState.PASSPORT_SER.set()
+   
 
 
 @dp.message_handler(state=RegistrationState.PASSPORT_SER)
@@ -144,30 +151,26 @@ async def check(message: types.Message, state: FSMContext):
     keyboard.add(button_edit_name, button_edit_ps_ser, button_edit_ps_num, button_edit_issue,
                  button_edit_reg_address, button_edit_id, button_edit_phone, button_generation)
 
-    await message.answer(f'Будь ласка, перевірте введені дані. За необхідності, можете їх редагувати.\n Якщо все вірно, натисніть "Підтвердити" для генерації договору')
-    await message.answer(f'ПІБ: {data["name"]}\nСерія паспорту: {data["passport_ser"]}\n \
-                         Номер паспорту: {data["passport_num"]}\n \
-                         Ким і коли видан: {data["passport_issued_by"]}\n \
-                         Адреса реестрації: {data["reg_address"]}\n \
-                         ІПН: {data["id_code"]}\n \
-                         Номер телефону: {data["mobile_phone"]}', 
-                         reply_markup=keyboard)
+    await message.answer(f'Будь ласка, перевірте введені дані. За необхідності, можете їх редагувати.'
+                         '\nЯкщо все вірно, натисніть "Підтвердити" для генерації договору \n'
+                         f'\nПІБ: {data["name"]}'
+                         f'\nСерія паспорту: {data["passport_ser"]}'
+                         f'\nНомер паспорту: {data["passport_num"]}'
+                         f'\nКим і коли видан: {data["passport_issued_by"]}'
+                         f'\nАдреса реестрації: {data["reg_address"]}'
+                         f'\nІПН: {data["id_code"]}'
+                         f'\nНомер телефону: {data["mobile_phone"]}', 
+                        reply_markup=keyboard)
     await RegistrationState.CONFIRMATION.set()
 
 
-@dp.message_handler(content_types=['text'], text='Редагувати ім\'я', state=RegistrationState.CONFIRMATION)
-async def edit_name_handler(message: types.Message):
-    await message.answer(f'Будь ласка, введіть ПІБ')
-    await RegistrationState.EDIT_NAME.set()
-
-@dp.message_handler(state=RegistrationState.EDIT_NAME)
-async def edit_name(message: types.Message, state: FSMContext):
+@dp.message_handler(state=RegistrationState.CONFIRMATION)
+async def edit_handler(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
-        data['name'] = message.text
+        data['edit_name'] = True
 
-    await RegistrationState.CHECK.set()
-    await check(message, state)
-
+    await message.answer(f'Будь ласка, введіть оновлене ПІБ')
+    await RegistrationState.NAME.set()
 
 
 @dp.message_handler(content_types=['text'], text='Підтвердити', state=RegistrationState.CONFIRMATION)
