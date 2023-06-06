@@ -1,18 +1,13 @@
 from bs4 import BeautifulSoup
 import pdfkit
 import os
-from user_data import UserData
 from datetime import datetime
 import locale
 
 def generate_pdf_with_data(html_file, output_pdf,user_data):
-    # Завантажуємо HTML-файл
-
     with open(html_file, 'r') as file:
         html_content = file.read()
 
-
-    # Створюємо об'єкт BeautifulSoup для обробки HTML
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Знаходимо елементи, в які потрібно вставити дані
@@ -59,14 +54,9 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     # Видаляємо тимчасовий HTML-файл
     os.remove(temp_html_file)
 
-
-
-mes = '12345'
-
 def agr_num_generator(message):
     date = datetime.today().strftime("%y%m%d")
     return f'{date}-{message}'
-
 
 def get_month():
     date = datetime.today()
@@ -80,35 +70,11 @@ def get_month():
     # Повертаємо назву місяця
     return month_name
 
-
 def get_day():
     return f'{datetime.today().day}'
 
 def get_year():
     return f'{datetime.today().year}'
-
-print(get_month())
-print(get_day())
-print(get_year())
-
-# Приклад використання
-data = UserData()
-
-html_file = './template/agreement_template.html'
-output_pdf = './agreements/output.pdf'
-data.agreement_num = f'{agr_num_generator(mes)}'
-data.sign_date['day'] = f'{get_day()}'
-data.sign_date['month'] = f'{get_month()}'
-data.sign_date['year'] = f'{get_year()}'
-data.name = 'Наталія Щербина'
-data.passport_ser = 'AB'
-data.passport_num = '333555'
-data.passport_issued_by = 'якимось РУГУ в якогось району деякого міста від 01 березня 2000 р.'
-data.reg_address = 'м. Київ, вул. Хрещатик 1, кв. 1'
-data.id_code = '123456789'
-data.mobile_phone = '+380993331122'
-
-# generate_pdf_with_data(html_file, output_pdf, data)
 
 
 
