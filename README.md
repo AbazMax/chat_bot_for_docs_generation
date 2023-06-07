@@ -11,7 +11,7 @@ For converting HTML file to PDF used Wkhtmltopdf.
 
 1. Clone repository
 ```
-git clone https://github.com/your-username/your-repo.git
+https://github.com/AbazMax/chat_bot_for_docs_generation.git
 ```
 2. Install requirements
 ```
