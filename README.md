@@ -10,15 +10,15 @@ For converting HTML file to PDF used Wkhtmltopdf.
 ## Running
 
 1. Clone repository
-'''shell
+```
 git clone https://github.com/your-username/your-repo.git
-'''
+```
 2. Install requirements
-'''shell
+```
 pip install -r requirements.txt
-'''
+```
 3. Run main file
-'''shell
+```
 python main.py
-'''
+```
 
