@@ -17,7 +17,8 @@ https://github.com/AbazMax/chat_bot_for_docs_generation.git
 ```
 pip install -r requirements.txt
 ```
-3. Run main file
+3. Create .env file and use your telegram Token
+4. Run main file
 ```
 python main.py
 ```

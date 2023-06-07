@@ -4,8 +4,12 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from functions import agr_num_generator, get_day, get_month, get_year, generate_pdf_with_data
+from dotenv import load_dotenv
+import os
 
-TOKEN = '5670993457:AAFAL0_TFVTIVz5EYgiGz8WRI9BjWenLWoY'
+load_dotenv()
+
+TOKEN = os.getenv("TOKEN")
 
 storage = MemoryStorage()
 bot = Bot(token=TOKEN)
