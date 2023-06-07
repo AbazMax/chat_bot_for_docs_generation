@@ -5,12 +5,31 @@ from datetime import datetime
 import locale
 
 def generate_pdf_with_data(html_file, output_pdf,user_data):
+    """
+    Scrapping html template with BeautifulSoup.
+    Fill received user data and generate PDF file.
+
+    Args:
+        html_file: html template for scraping
+        output_pdf: path to generated PDF file
+        user_data: dictionary with keys:
+                        {'agreement_num': '',
+                        'sign_date_d: '',
+                        'sign_date_m': '',
+                        'sign_date_y': '',
+                        'name': '',
+                        'passport_ser': '',
+                        'passport_num': '',
+                        'passport_issued_by': '',
+                        'reg_address':, '',
+                        'id_code':, '',
+                        'mobile_phone': ''}
+    """
     with open(html_file, 'r') as file:
         html_content = file.read()
 
     soup = BeautifulSoup(html_content, 'html.parser')
 
-    # Знаходимо елементи, в які потрібно вставити дані
     agreement_num_element = soup.find(id='agreement_num')
     sign_date_d_element = soup.find(id='sign_date_d')
     sign_date_m_element = soup.find(id='sign_date_m')
@@ -23,7 +42,6 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     id_code_element = soup.find(id='id_code')
     mobile_phone_element = soup.find(id='mobile_phone')
     
-    # Вставляємо дані в елементи
     agreement_num_element.string = user_data['agreement_num']
     sign_date_d_element.string = user_data['sign_date']['day']
     sign_date_m_element.string = user_data['sign_date']['month']
@@ -36,12 +54,11 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     id_code_element.string = user_data['id_code']
     mobile_phone_element.string = user_data['mobile_phone']
 
-    # Зберігаємо змінений HTML у тимчасовий файл
     temp_html_file = 'temp.html'
     with open(temp_html_file, 'w') as file:
         file.write(str(soup))    
 
-    # Зберігаємо PDF-файл використовуючи wkhtmltopdf
+    # save PDF file using wkhtmltopdf
     options = {
     'margin-top': '10mm',
     'margin-right': '15mm',
@@ -50,24 +67,21 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     }
     
     pdfkit.from_file(temp_html_file, output_pdf, options=options)
-
-    # Видаляємо тимчасовий HTML-файл
     os.remove(temp_html_file)
 
 def agr_num_generator(message):
+    """
+    Generating agreement number. 
+    Concists of date in format "ymd" and user id in telegram
+    """
     date = datetime.today().strftime("%y%m%d")
     return f'{date}-{message}'
 
 def get_month():
+    """Get the month in the Ukrainian language in the genitive case"""
     date = datetime.today()
-    
-    # Встановлюємо українську локалізацію
     locale.setlocale(locale.LC_TIME, 'uk_UA.UTF-8')
-    
-    # Отримуємо назву місяця українською
     month_name = date.strftime('%B')
-    
-    # Повертаємо назву місяця
     return month_name
 
 def get_day():
