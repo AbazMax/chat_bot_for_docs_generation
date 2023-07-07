@@ -3,6 +3,7 @@ import pdfkit
 import os
 from datetime import datetime
 import locale
+from sys import platform
 
 def generate_pdf_with_data(html_file, output_pdf,user_data):
     """
@@ -66,7 +67,12 @@ def generate_pdf_with_data(html_file, output_pdf,user_data):
     'margin-left': '15mm'
     }
     
-    pdfkit.from_file(temp_html_file, output_pdf, options=options)
+    try: 
+        pdfkit.from_file(temp_html_file, output_pdf, options=options) 
+    except OSError: 
+        path_wkhtmltopdf = os.getenv('PATH_WKHTMLTOPDF') 
+        config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)     
+        pdfkit.from_file(temp_html_file, output_pdf, options=options, configuration=config)
     os.remove(temp_html_file)
 
 def agr_num_generator(message):
@@ -80,8 +86,17 @@ def agr_num_generator(message):
 def get_month():
     """Get the month in the Ukrainian language in the genitive case"""
     date = datetime.today()
-    locale.setlocale(locale.LC_TIME, 'uk_UA.UTF-8')
-    month_name = date.strftime('%B')
+    if platform == 'win32': 
+        locale.setlocale(locale.LC_TIME, 'Ukrainian_Ukraine') 
+        if date.month != 2 and date.month != 11: 
+            month_name = date.strftime('%B')[:3] + "ня" 
+        elif date.month == 2: 
+            month_name = 'лютого' 
+        elif date.month == 11: 
+            month_name = 'листопада' 
+    else:         
+        locale.setlocale(locale.LC_TIME, 'uk_UA.utf-8') 
+        month_name = date.strftime('%B')
     return month_name
 
 def get_day():
